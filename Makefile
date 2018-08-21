@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/08/19 23:23:20 by toliver          ###   ########.fr        #
+#    Updated: 2018/08/22 00:09:02 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,10 @@ NAME = ft_ls
 FLAGS = -Werror -Wextra -Wall
 
 FILES = ft_ls \
+		init \
+		parsing \
+		error \
+		list_handling \
 
 SRC = $(addsuffix .c, $(FILES))
 
