@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 00:03:25 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 01:59:03 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,9 +129,32 @@ int					parsing(int argc, char **argv, t_param *env)
 ** un pointeur sur errorlist dans laquelle mettre le fichier d'erreur;
 */
 
+int					print_filelist(t_file **filelist, int flags)
+{
+	listorder(filelist, flags);
+	return (1);
+}
+
+int					print_cantopenlist(t_file **cantopenlist, int flags)
+{
+	t_file			*ptr;
+	t_file			*ptr2;
+
+	listorder(cantopenlist, flags);
+	ptr = *cantopenlist;
+	while (ptr)
+	{
+		ft_printf("ft_ls: %s: Permission denied\n", ptr->name);
+		ptr2 = ptr;
+		ptr = ptr->next;
+		delnode(cantopenlist, ptr2);
+		freenode(ptr2);
+	}
+	return (1);
+}
+
 int					print_errorlist(t_file **errorlist)
 {
-	(void)errorlist;
 	t_file			*ptr;
 	t_file			*ptr2;
 
@@ -139,7 +162,7 @@ int					print_errorlist(t_file **errorlist)
 	ptr = *errorlist;
 	while (ptr)
 	{
-		ft_printf("ls : %s: No such file or directory\n", ptr->name);
+		ft_printf("ft_ls: %s: No such file or directory\n", ptr->name);
 		ptr2 = ptr;
 		ptr = ptr->next;
 		delnode(errorlist, ptr2);
@@ -148,8 +171,22 @@ int					print_errorlist(t_file **errorlist)
 	return (1);
 }
 
-// dabord erreur si le file n'existe pas et ensuite si la permission denied
+int					print_list_long(t_file *list, int width)
+{
+	(void)list;
+	(void)width;
+	return (1);
+}
 
+int					print_list_column(t_file *list, int width)
+{
+	(void)list;
+	(void)width;
+	return (1);
+}
+
+// dabord erreur si le file n'existe pas et ensuite si la permission denied
+// si on est en -R affiche le cant open au moment d'afficher le contenu du dir
 int					first_check(t_param *env)
 {
 	t_file			*listptr;
@@ -157,14 +194,27 @@ int					first_check(t_param *env)
 	listptr = env->list;
 	while (listptr)
 	{
-		if (listptr->infos.permissions[0] == '!')
+		if (listptr->infos.permissions[0] != 'd')
 		{
-			movenode(&env->list, listptr, &env->errorlist);
+			movenode(&env->list, listptr, (listptr->infos.permissions[0] == '!')
+					? &env->errorlist : &env->filelist);
 			listptr = env->list;
 		}
+	   	// faire tout ca en 1 condition if != d puis un ternaire pour le env
+		//filelist ou le env errorlist
 		else
-			listptr = listptr->next;
+		{
+	//		if (CANTOPEN THIS SHIT)
+	//		{
+	//			movenode(&env->list, listptr, &env->cantopenlist);
+	//			listptr = env->list;
+	//		}
+	//		else
+				listptr = listptr->next;
+		}
 	}
 	print_errorlist(&env->errorlist);
+	print_cantopenlist(&env->cantopenlist, env->flags);
+	print_filelist(&env->filelist, env->flags);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 00:08:46 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 01:59:05 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,20 @@ typedef struct	s_param
 	int			width;
 	int			flags;
 	t_file		*list;
+	t_file		*filelist;
+	t_file		*cantopenlist;
 	t_file		*errorlist;
 }				t_param;
 
+/*
+** Printing functions
+*/
+
+int				print_errorlist(t_file **errorlist);
+int				print_cantopenlist(t_file **errorlist, int flags);
+int				print_filelist(t_file **filelist, int flags);
+int				print_list_long(t_file *list, int width);
+int				print_list_column(t_file *list, int width);
 
 /*
 ** Initialization functions
@@ -100,5 +111,8 @@ int				errorlistorder(t_file **list);
 t_file			*get_first_time(t_file **list);
 t_file			*get_first_alpha(t_file **list);
 int				listorder(t_file **list, int flags);
+t_file			*get_nnode(t_file *list, int number);
+int				get_listlen(t_file *list);
+int				get_biggestnamelen(t_file *list);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:40:25 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/20 17:41:24 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 01:45:55 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int					envinit(t_param *env)
 	env->width = w.ws_col;
 	env->flags = 0;
 	env->list = NULL;
+	env->filelist = NULL;
+	env->cantopenlist = NULL;
 	env->errorlist = NULL;
 	return (1);
 }

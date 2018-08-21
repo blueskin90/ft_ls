@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 23:00:55 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 00:08:43 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 01:49:26 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,4 +200,49 @@ int			errorlistorder(t_file **list)
 		movenode(list, ptr, &newlist);
 	*list = newlist;
 	return (1);
+}
+
+t_file		*get_nnode(t_file *list, int number)
+{
+	t_file	*tmp;
+
+	tmp = list;
+	while (tmp && number)
+	{
+		tmp = tmp->next;
+		number--;
+	}
+	return (tmp);
+}
+
+int			get_listlen(t_file *list)
+{
+	int		i;
+	t_file	*tmp;
+
+	tmp = list;
+	i = 0;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return (i);
+}
+
+int			get_biggestnamelen(t_file *list)
+{
+	t_file	*tmp;
+	int		biggest;
+	int		strlen;
+
+	biggest = 0;
+	tmp = list;
+	while (tmp)
+	{
+		if ((strlen = (int)ft_strlen(tmp->name)) > biggest)
+			biggest = strlen;
+		tmp = tmp->next;
+	}
+	return (biggest);
 }

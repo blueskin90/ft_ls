@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:28:42 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 00:08:48 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 01:59:01 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,21 @@ int			ft_test(t_param env)
 {
 	t_file	*tmp;
 
-	ft_printf("flags = %b\n", env.flags);
-	tmp = env.list;
-	ft_printf("printing CORRECT files :\n");
+//	ft_printf("flags = %b\n", env.flags);
+	tmp = env.filelist;
+	ft_printf("printing FILES :\n");
 	while (tmp)
 	{
 		ft_printf("name = %s\n", tmp->name);
+		freenode(tmp);
+		tmp = tmp->next;
+	}
+	tmp = env.list;
+	ft_printf("printing DIRECTORIES :\n");
+	while (tmp)
+	{
+		ft_printf("name = %s\n", tmp->name);
+		/*
 		ft_printf("id du peripherique contenant le fichier : %d\n", tmp->stat.st_dev);
 		ft_printf("numero inode %llu\n", tmp->stat.st_ino);
 		ft_printf("protection %d\n", tmp->stat.st_mode);
@@ -36,8 +45,11 @@ int			ft_test(t_param env)
 		ft_printf("Heure reniere modification %ld\n", tmp->stat.st_mtime);
 		ft_printf("Heure dernier changement etat %ld\n", tmp->stat.st_ctime);
 		ft_printf("Premiere lettre du type de fichier : %c\n", tmp->infos.permissions[0]);
+		*/
 		tmp = tmp->next;
 	}
+
+	/*
 	tmp = env.errorlist;
 	ft_printf("ERROR files :\n");
 	while (tmp)
@@ -46,6 +58,7 @@ int			ft_test(t_param env)
 		freenode(tmp);
 		tmp = tmp->next;
 	}
+	*/
 	return (1);
 }
 
