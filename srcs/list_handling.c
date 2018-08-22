@@ -6,11 +6,24 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 23:00:55 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 01:49:26 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 22:56:30 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+
+int					addfile(struct dirent *filetoadd, t_file *file, int flags)
+{
+	char			*nodepath;
+	char			*tmp;
+	
+	nodepath = ft_strjoin(file->path, "/");
+	tmp = nodepath;
+	nodepath = ft_strjoin(tmp, filetoadd->d_name);
+	free(tmp);
+	addnode(&file->list, nodealloc(ft_strdup(filetoadd->d_name), nodepath, flags));
+	return (1);
+}
 
 t_file				*nodealloc(char *name, char *path, int flags)
 {
@@ -21,6 +34,7 @@ t_file				*nodealloc(char *name, char *path, int flags)
 	file->name = name;
 	file->path = (path == NULL) ? ft_strdup(name) : path;
 	file->iserror = 0;
+	file->dirp = NULL;
 	file->next = NULL;
 	file->list = NULL;
 	file->errorlist = NULL;

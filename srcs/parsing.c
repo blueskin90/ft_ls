@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 01:59:03 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 22:56:29 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,13 @@ int					flagset(t_param *env, char *str)
 	return (1);
 }
 
+int					iscorrect(char c)
+{
+	if (c == 'R' || c == 'a' || c == 'g' || c == 'l' || c == 'r' || c == 't')
+		return (1);
+	return (0);
+}
+
 int					parsing(int argc, char **argv, t_param *env)
 {
 	int				i;
@@ -102,10 +109,11 @@ int					parsing(int argc, char **argv, t_param *env)
 	i = 1;
 	while (i < argc)
 	{
-		if (argv[i][0] != '-')
+		if (argv[i][0] != '-'
+				|| (argv[i][0] == '-' && !(iscorrect(argv[i][1]))))
 			break;
 		else
-			flagset(env, argv[i]);
+				flagset(env, argv[i]);
 		i++;
 	}
 	if (i >= argc)
@@ -122,69 +130,6 @@ int					parsing(int argc, char **argv, t_param *env)
 	}
 	return (1);
 }
-
-
-/*
-** faire la fonction qui recupere un pointeur sur liste, un fichier a bouger et
-** un pointeur sur errorlist dans laquelle mettre le fichier d'erreur;
-*/
-
-int					print_filelist(t_file **filelist, int flags)
-{
-	listorder(filelist, flags);
-	return (1);
-}
-
-int					print_cantopenlist(t_file **cantopenlist, int flags)
-{
-	t_file			*ptr;
-	t_file			*ptr2;
-
-	listorder(cantopenlist, flags);
-	ptr = *cantopenlist;
-	while (ptr)
-	{
-		ft_printf("ft_ls: %s: Permission denied\n", ptr->name);
-		ptr2 = ptr;
-		ptr = ptr->next;
-		delnode(cantopenlist, ptr2);
-		freenode(ptr2);
-	}
-	return (1);
-}
-
-int					print_errorlist(t_file **errorlist)
-{
-	t_file			*ptr;
-	t_file			*ptr2;
-
-	errorlistorder(errorlist);
-	ptr = *errorlist;
-	while (ptr)
-	{
-		ft_printf("ft_ls: %s: No such file or directory\n", ptr->name);
-		ptr2 = ptr;
-		ptr = ptr->next;
-		delnode(errorlist, ptr2);
-		freenode(ptr2);
-	}
-	return (1);
-}
-
-int					print_list_long(t_file *list, int width)
-{
-	(void)list;
-	(void)width;
-	return (1);
-}
-
-int					print_list_column(t_file *list, int width)
-{
-	(void)list;
-	(void)width;
-	return (1);
-}
-
 // dabord erreur si le file n'existe pas et ensuite si la permission denied
 // si on est en -R affiche le cant open au moment d'afficher le contenu du dir
 int					first_check(t_param *env)
@@ -200,21 +145,31 @@ int					first_check(t_param *env)
 					? &env->errorlist : &env->filelist);
 			listptr = env->list;
 		}
-	   	// faire tout ca en 1 condition if != d puis un ternaire pour le env
-		//filelist ou le env errorlist
 		else
-		{
-	//		if (CANTOPEN THIS SHIT)
-	//		{
-	//			movenode(&env->list, listptr, &env->cantopenlist);
-	//			listptr = env->list;
-	//		}
-	//		else
-				listptr = listptr->next;
-		}
+			listptr = listptr->next;
 	}
 	print_errorlist(&env->errorlist);
-	print_cantopenlist(&env->cantopenlist, env->flags);
-	print_filelist(&env->filelist, env->flags);
+	print_filelist(&env->filelist, env->flags, env->width);
+	if (env->filelist && env->list)
+		ft_printf("\n");
+	print_firstdirlist(&env->list, env->flags, env->width);
+	return (1);
+}
+
+int			fill_dir(t_file *dir, int flags)
+{
+	struct dirent	*currentdir;
+	if (!(dir->dirp = opendir(dir->path)))
+		return (0);
+	while((currentdir = readdir(dir->dirp)))
+	{
+		if ((flags & A_FLAG) || (!(flags & A_FLAG) 
+					&& currentdir->d_name[0] != '.'))
+		{
+			addfile(currentdir, dir, flags);
+		}
+	}
+	closedir(dir->dirp);
+	listorder(&dir->list, flags);
 	return (1);
 }

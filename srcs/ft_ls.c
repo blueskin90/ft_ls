@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:28:42 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 01:59:01 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 22:25:28 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int			ft_test(t_param env)
 	t_file	*tmp;
 
 //	ft_printf("flags = %b\n", env.flags);
+
+	/*
 	tmp = env.filelist;
 	ft_printf("printing FILES :\n");
 	while (tmp)
@@ -25,6 +27,7 @@ int			ft_test(t_param env)
 		freenode(tmp);
 		tmp = tmp->next;
 	}
+	*/
 	tmp = env.list;
 	ft_printf("printing DIRECTORIES :\n");
 	while (tmp)
@@ -70,9 +73,7 @@ int			main(int argc, char **argv)
 	parsing(argc, argv, &env);
 	first_check(&env);
 	listorder(&env.list, env.flags);
-	ft_test(env);
-	(void)argc;
-	(void)argv;
+//	ft_test(env);
 	return (1);
 }
 

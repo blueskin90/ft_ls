@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 01:59:05 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/22 22:56:27 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct	s_file
 	char			*path;
 	char			iserror;
 	t_infos			infos;
+	DIR				*dirp;
 	struct stat		stat;
 	struct s_file	*next;
 	struct s_file	*list;
@@ -69,15 +70,24 @@ typedef struct	s_param
 }				t_param;
 
 /*
+**	In testing functions
+*/
+
+int				fill_dir(t_file *file, int flags);
+int				recursive(t_file *list, int flags, int width);
+int				addfile(struct dirent *filetoadd, t_file *dir, int flags);
+int				iscorrectflag(char c);
+
+/*
 ** Printing functions
 */
 
 int				print_errorlist(t_file **errorlist);
-int				print_cantopenlist(t_file **errorlist, int flags);
-int				print_filelist(t_file **filelist, int flags);
+int				print_filelist(t_file **filelist, int flags, int width);
 int				print_list_long(t_file *list, int width);
 int				print_list_column(t_file *list, int width);
-
+int				print_firstdirlist(t_file **list, int flags, int width);
+int				print_permisiondenied(t_file *file);
 /*
 ** Initialization functions
 */
@@ -94,6 +104,7 @@ int				illegal_option(char c);
 int				fileadd(t_file **list, char *name, char *path, int flags);
 int				first_check(t_param *env);
 int				get_info(t_file *file, int flags);
+int				fill_dir(t_file *file, int flags);
 
 /*
 **	List manipulation functions
