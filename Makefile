@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/08/22 00:09:02 by toliver          ###   ########.fr        #
+#    Updated: 2018/08/22 23:26:33 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ FILES = ft_ls \
 		parsing \
 		error \
 		list_handling \
+		printing \
 
 SRC = $(addsuffix .c, $(FILES))
 

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 22:56:27 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/23 15:24:14 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,11 @@ typedef struct	s_param
 */
 
 int				fill_dir(t_file *file, int flags);
-int				recursive(t_file *list, int flags, int width);
+int				recursive(t_file **list, int flags, int width);
 int				addfile(struct dirent *filetoadd, t_file *dir, int flags);
 int				iscorrectflag(char c);
+int				clearlist(t_file **file);
+int				containadir(t_file *list);
 
 /*
 ** Printing functions

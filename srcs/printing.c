@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 16:48:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 22:56:26 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/23 15:24:11 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,17 +100,39 @@ int				print_permissiondenied(t_file *file)
 	return (1);
 }
 
-int				recursive(t_file *list, int flags, int width)
+int				containadir(t_file *list)
+{
+	t_file		*ptr;
+
+	ptr = list;
+	while (ptr)
+	{
+		if (S_ISDIR(ptr->stat.st_mode))
+			break;
+		ptr = ptr->next;
+	}
+	if (ptr)
+		return (1);
+	return (0);
+}
+
+int				recursive(t_file **list, int flags, int width)
 {
 	t_file		*file;
+	int			isfirst;
 
-	file = list;
+	isfirst = 0;
+	file = *list;
 	if (!list)
 		return (0);
 	while (file)
 	{
 		if (S_ISDIR(file->stat.st_mode))
 		{
+			if (isfirst == 0)
+				isfirst = 1;
+			else
+				ft_putchar('\n');
 			if (!(fill_dir(file, flags)))
 			{
 				print_permissiondenied(file);
@@ -119,14 +141,14 @@ int				recursive(t_file *list, int flags, int width)
 			}
 			else
 			{
-				ft_printf("%s:\n", file->name);
-				if (flags & L_FLAG)
-					print_list_long(file->list, width);
-				else
-					print_list_column(file->list, width);
-				if (file->list)
+				ft_printf("%s:\n", file->path);
+				print_filelist(&file->list, flags, width);
+				clearlist(&file->list);
+				if (containadir(file->list))
+				{
 					ft_putchar('\n');
-				recursive(file->list, flags, width);
+					recursive(&file->list, flags, width);
+				}
 				freelist(&file->list);
 			}
 		}
@@ -135,13 +157,29 @@ int				recursive(t_file *list, int flags, int width)
 	return (1);
 }
 
+int				clearlist(t_file **list)
+{
+	t_file		*ptr;
+	t_file		*tmp;
+
+	ptr = *list;
+	while (ptr)
+	{
+		if (!(S_ISDIR(ptr->stat.st_mode)))
+		{
+			tmp = ptr->next;
+			delnode(list, ptr);
+			freenode(ptr);
+			ptr = tmp;
+		}
+		else
+			ptr = ptr->next;
+	}
+	return (1);
+}
+
 int				print_firstdirlist(t_file **list, int flags, int width)
 {
-
-/*
-** orderlist via flags, if cant open print permission denied, if multi output
-** afficher le nom avant ... etc
-*/
 	t_file		*ptr;
 
 	listorder(list, flags);
@@ -152,19 +190,18 @@ int				print_firstdirlist(t_file **list, int flags, int width)
 			ft_printf("%s:\n", ptr->name);
 		if (!(fill_dir(ptr, flags)))
 			print_permissiondenied(ptr);
-		else if (flags & L_FLAG)
-			print_list_long(ptr->list, width);
-		else
-			print_list_column(ptr->list, width);
+		print_filelist(&ptr->list, flags, width);
 		if (flags & BIGR_FLAG)
 		{
-			// faire une fonction qui clean *ptr de tous ses fichiers qui sont illisibles par nous;
-			recursive(ptr->list, flags, width);
+			clearlist(&ptr->list);
+			if (containadir(ptr->list))
+			{
+				ft_putchar('\n');
+				recursive(&ptr->list, flags, width);
+			}
 			freelist(&ptr->list);
 		}
 		ptr = ptr->next;
-		if (ptr)
-			ft_printf("\n");
 	}
 	freelist(list);
 	return (1);

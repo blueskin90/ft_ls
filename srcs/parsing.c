@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 22:56:29 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/23 15:24:08 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,8 +130,7 @@ int					parsing(int argc, char **argv, t_param *env)
 	}
 	return (1);
 }
-// dabord erreur si le file n'existe pas et ensuite si la permission denied
-// si on est en -R affiche le cant open au moment d'afficher le contenu du dir
+
 int					first_check(t_param *env)
 {
 	t_file			*listptr;
@@ -150,7 +149,7 @@ int					first_check(t_param *env)
 	}
 	print_errorlist(&env->errorlist);
 	print_filelist(&env->filelist, env->flags, env->width);
-	if (env->filelist && env->list)
+	if ((env->errorlist || env->filelist) && env->list)
 		ft_printf("\n");
 	print_firstdirlist(&env->list, env->flags, env->width);
 	return (1);
