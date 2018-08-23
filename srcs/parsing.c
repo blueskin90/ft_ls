@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 15:24:08 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/23 16:42:01 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int					get_file_type(t_file *file)
 {
+	ft_bzero(file->infos.permissions, 11);
 	if (S_ISREG(file->stat.st_mode))
 		file->infos.permissions[0] = '-';
 	else if (S_ISDIR(file->stat.st_mode))
@@ -35,17 +36,25 @@ int					get_file_type(t_file *file)
 
 int					get_more_info(t_file *file, int flags)
 {
-	(void)file;
+	file->infos.permissions[1] = ((file->stat.st_mode & S_IRUSR) ? 'r' : '-');
+	file->infos.permissions[2] = ((file->stat.st_mode & S_IWUSR) ? 'w' : '-');
+	file->infos.permissions[3] = ((file->stat.st_mode & S_IXUSR) ? 'x' : '-');
+	file->infos.permissions[4] = ((file->stat.st_mode & S_IRGRP) ? 'r' : '-');
+	file->infos.permissions[5] = ((file->stat.st_mode & S_IWGRP) ? 'w' : '-');
+	file->infos.permissions[6] = ((file->stat.st_mode & S_IXGRP) ? 'x' : '-');
+	file->infos.permissions[7] = ((file->stat.st_mode & S_IROTH) ? 'r' : '-');
+	file->infos.permissions[8] = ((file->stat.st_mode & S_IWOTH) ? 'w' : '-');
+	file->infos.permissions[9] = ((file->stat.st_mode & S_IXOTH) ? 'x' : '-');
 	(void)flags;
 	return (1);
 }
 
 int					get_info(t_file *file, int flags)
 {
-	stat(file->path, &file->stat);
+	lstat(file->path, &file->stat);
+	get_file_type(file);
 	if (flags & INFO_FLAGS)
 		get_more_info(file, flags);
-	get_file_type(file);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 15:24:14 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/23 16:56:43 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@
 
 typedef struct	s_infos
 {
-	char		permissions[10];
+	char		permissions[11];
+	int			numberoflinks;
 }				t_infos;
 
 typedef struct	s_file
@@ -73,6 +74,11 @@ typedef struct	s_param
 **	In testing functions
 */
 
+int				nbrlen(long long int nbr);
+int				get_linkslen(t_file *list);
+int				get_uidlen(t_file *list);
+int				get_grgidlen(t_file *list);
+int				get_biggestsize(t_file *list);
 int				fill_dir(t_file *file, int flags);
 int				recursive(t_file **list, int flags, int width);
 int				addfile(struct dirent *filetoadd, t_file *dir, int flags);

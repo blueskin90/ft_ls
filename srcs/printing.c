@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 16:48:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 15:24:11 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/23 16:56:12 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,99 @@ int					print_errorlist(t_file **errorlist)
 	return (1);
 }
 
+int					nbrlen(long long int nbr)
+{
+	int				i;
+
+	i = 0;
+	while (nbr / 10)
+	{
+		i++;
+		nbr = nbr/10;
+	}
+	i++;
+	return (i);
+}
+
+int					get_linkslen(t_file *list)
+{
+	t_file			*ptr;
+	long long int	biggest;
+	long long int	size;
+
+	biggest = 0;
+	ptr = list;
+	while (ptr)
+	{
+		if ((size = nbrlen(ptr->stat.st_nlink)) > biggest)
+			biggest = size;
+		ptr = ptr->next;
+	}
+	return (biggest);
+}
+
+int					get_uidlen(t_file *list)
+{
+	t_file			*ptr;
+	long long int	biggest;
+	long long int	size;
+
+	biggest = 0;
+	ptr = list;
+	while (ptr)
+	{
+		if ((size = ft_strlen(getpwuid(ptr->stat.st_uid)->pw_name)) > biggest)
+			biggest = size;
+		ptr = ptr->next;
+	}
+	return (biggest);
+}
+
+int					get_grgidlen(t_file *list)
+{
+	t_file			*ptr;
+	long long int	biggest;
+	long long int	size;
+
+	biggest = 0;
+	ptr = list;
+	while (ptr)
+	{
+		if ((size = ft_strlen(getgrgid(ptr->stat.st_gid)->gr_name)) > biggest)
+			biggest = size;
+		ptr = ptr->next;
+	}
+	return (biggest);
+}
+
+int					get_biggestsize(t_file *list)
+{
+	t_file			*ptr;
+	long long int	biggest;
+	long long int	size;
+
+	biggest = 0;
+	ptr = list;
+	while (ptr)
+	{
+		if ((size = nbrlen(ptr->stat.st_size)) > biggest)
+			biggest = size;
+		ptr = ptr->next;
+	}
+	return (biggest);
+}
+
 int					print_list_long(t_file *list, int width)
 {
-	(void)list;
+	t_file			*ptr;
+
+	ptr = list;
+	while (ptr)
+	{
+		ft_printf("%s %*d %-*s %-*s %*lld %s", ptr->infos.permissions, get_linkslen(list) + 1, ptr->stat.st_nlink, get_uidlen(list) + 1, getpwuid(ptr->stat.st_uid)->pw_name, get_grgidlen(list) + 1, getgrgid(ptr->stat.st_gid)->gr_name, get_biggestsize(list) + 1, ptr->stat.st_size, ptr->name);
+		ft_putchar('\n');
+		ptr = ptr->next;
+	}
 	(void)width;
 	return (1);
 }
