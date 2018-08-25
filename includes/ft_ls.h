@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 16:56:43 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/25 20:13:35 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,20 @@
 
 typedef struct	s_infos
 {
-	char		permissions[11];
-	int			numberoflinks;
-}				t_infos;
+	char			permissions[12];
+	int				linknumber;
+	char			*usrname;
+	int				usrnum;
+	char			*grpname;
+	int				grpnum;
+	long long int	size;
+	int				blocksize;
+	char			*month;
+	int				day;
+	int				hour;
+	int				min;
+	char			*linkname;
+}				t_infos; // rajouter les valeurs dans le / dev
 
 typedef struct	s_file
 {
@@ -79,6 +90,7 @@ int				get_linkslen(t_file *list);
 int				get_uidlen(t_file *list);
 int				get_grgidlen(t_file *list);
 int				get_biggestsize(t_file *list);
+int				get_biggestday(t_file *list);
 int				fill_dir(t_file *file, int flags);
 int				recursive(t_file **list, int flags, int width);
 int				addfile(struct dirent *filetoadd, t_file *dir, int flags);
@@ -92,7 +104,7 @@ int				containadir(t_file *list);
 
 int				print_errorlist(t_file **errorlist);
 int				print_filelist(t_file **filelist, int flags, int width);
-int				print_list_long(t_file *list, int width);
+int				print_list_long(t_file *list, int width, int flags);
 int				print_list_column(t_file *list, int width);
 int				print_firstdirlist(t_file **list, int flags, int width);
 int				print_permisiondenied(t_file *file);

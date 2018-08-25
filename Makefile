@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/08/22 23:26:33 by toliver          ###   ########.fr        #
+#    Updated: 2018/08/25 20:30:46 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,9 +51,13 @@ $(NAME): $(OBJS) $(HEADERS)
 	gcc -o $@ -c $< $(FLAGS) $(INCLUDES)
 
 clean:
+	make clean -C libs/libft/
+	make clean -C libs/ft_printf/
 	rm -rf $(OBJS)
 
 fclean: clean
+	make fclean -C libs/libft/
+	make fclean -C libs/ft_printf/
 	rm -rf $(NAME)
 
 re: fclean all

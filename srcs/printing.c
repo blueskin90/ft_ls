@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 16:48:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 16:56:12 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/25 20:39:27 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 int					print_filelist(t_file **filelist, int flags, int width)
 {
 	listorder(filelist, flags);
-	if (flags & L_FLAG)
-		print_list_long(*filelist, width);
+	if (flags & LONG_FLAGS)
+		print_list_long(*filelist, width, flags);
 	else
 		print_list_column(*filelist, width);	
 	return (1);
@@ -45,12 +45,13 @@ int					nbrlen(long long int nbr)
 	int				i;
 
 	i = 0;
-	while (nbr / 10)
+	if (nbr == 0)
+		return (1);
+	while (nbr / 10 || nbr % 10)
 	{
 		i++;
 		nbr = nbr/10;
 	}
-	i++;
 	return (i);
 }
 
@@ -81,7 +82,12 @@ int					get_uidlen(t_file *list)
 	ptr = list;
 	while (ptr)
 	{
-		if ((size = ft_strlen(getpwuid(ptr->stat.st_uid)->pw_name)) > biggest)
+		if (getpwuid(ptr->stat.st_uid) == NULL)
+		{
+			if ((size = nbrlen(ptr->stat.st_uid)) > biggest)
+				biggest = size;
+		}
+		else if ((size = ft_strlen(getpwuid(ptr->stat.st_uid)->pw_name)) > biggest)
 			biggest = size;
 		ptr = ptr->next;
 	}
@@ -98,7 +104,12 @@ int					get_grgidlen(t_file *list)
 	ptr = list;
 	while (ptr)
 	{
-		if ((size = ft_strlen(getgrgid(ptr->stat.st_gid)->gr_name)) > biggest)
+		if ((getgrgid(ptr->stat.st_gid)) == NULL)
+		{
+			if ((size = nbrlen(ptr->stat.st_gid)) > biggest)
+				biggest = size;
+		}
+		else if((size = ft_strlen(getgrgid(ptr->stat.st_gid)->gr_name)) > biggest)
 			biggest = size;
 		ptr = ptr->next;
 	}
@@ -122,17 +133,63 @@ int					get_biggestsize(t_file *list)
 	return (biggest);
 }
 
-int					print_list_long(t_file *list, int width)
+int					get_biggestday(t_file *list)
+{
+	t_file			*ptr;
+	long long int	biggest;
+	long long int	size;
+
+	biggest = 0;
+	ptr = list;
+	while (ptr)
+	{
+		if ((size = nbrlen(ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7))) > biggest)
+			biggest = size;
+		ptr = ptr->next;
+	}
+	return (biggest);
+}
+
+int					print_list_long(t_file *list, int width, int flags)
 {
 	t_file			*ptr;
 
 	ptr = list;
+	// penser : si grp name ou usr name = NULL, display le numero, si c'est un c afficher nombre, nombre, faire la date et heure de modification et le -> lien pour les liens 
 	while (ptr)
 	{
-		ft_printf("%s %*d %-*s %-*s %*lld %s", ptr->infos.permissions, get_linkslen(list) + 1, ptr->stat.st_nlink, get_uidlen(list) + 1, getpwuid(ptr->stat.st_uid)->pw_name, get_grgidlen(list) + 1, getgrgid(ptr->stat.st_gid)->gr_name, get_biggestsize(list) + 1, ptr->stat.st_size, ptr->name);
-		ft_putchar('\n');
+		if (flags & G_FLAG)
+		{
+			ft_printf("%s %*d ", ptr->infos.permissions, get_linkslen(list), ptr->stat.st_nlink);
+			if (getgrgid(ptr->stat.st_gid)->gr_name == NULL)
+				ft_printf("%-*d %*lld %s", get_grgidlen(list), ptr->stat.st_gid, get_biggestsize(list) + 1, ptr->stat.st_size, ptr->name);
+			else
+				ft_printf("%-*s %*lld %s", get_grgidlen(list), getgrgid(ptr->stat.st_gid)->gr_name, get_biggestsize(list) + 1, ptr->stat.st_size, ptr->name);
+			ft_putchar('\n');
+		}
+		else
+		{
+			ft_printf("%s %*d", ptr->infos.permissions, get_linkslen(list), ptr->stat.st_nlink);
+			if (getpwuid(ptr->stat.st_uid) != NULL)
+				ft_printf(" %-*s", get_uidlen(list) + 1, getpwuid(ptr->stat.st_uid)->pw_name);
+			else
+				ft_printf(" %-*d", get_uidlen(list) + 1, ptr->stat.st_uid);
+			if (getgrgid(ptr->stat.st_gid) != NULL)
+				ft_printf(" %-*s", get_grgidlen(list) + 1, getgrgid(ptr->stat.st_gid)->gr_name);
+			else
+				ft_printf("%-*d", get_grgidlen(list) + 1, ptr->stat.st_gid);
+			ft_printf("%*lld", get_biggestsize(list) + 1, ptr->stat.st_size);
+			ft_printf(" %.3s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 4);
+			ft_printf(" %*d", get_biggestday(list), ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7));
+			ft_printf(" %.5s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 11);
+			ft_printf(" %s",ptr->name);
+			if (ptr->infos.permissions[0] == 'l')
+				ft_printf(" -> %s mettre le fichier vers lequel ca pointe", ptr->path);
+			ft_putchar('\n');
+		}
 		ptr = ptr->next;
 	}
+	(void)flags;
 	(void)width;
 	return (1);
 }

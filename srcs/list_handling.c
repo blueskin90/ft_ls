@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 23:00:55 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 15:07:17 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/25 18:48:03 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,19 @@ int					addfile(struct dirent *filetoadd, t_file *file, int flags)
 {
 	char			*nodepath;
 	char			*tmp;
-	
-	nodepath = ft_strjoin(file->path, "/");
-	tmp = nodepath;
-	nodepath = ft_strjoin(tmp, filetoadd->d_name);
-	free(tmp);
+
+	if (file->path[0] != '/' || (file->path[0] == '/' && file->path[1] != 0))
+	{
+		nodepath = ft_strjoin(file->path, "/");
+		tmp = nodepath;
+		nodepath = ft_strjoin(tmp, filetoadd->d_name);
+		free(tmp);
+	}
+	else
+	{
+		tmp = file->path;
+		nodepath = ft_strjoin(tmp, filetoadd->d_name);
+	}
 	addnode(&file->list, nodealloc(ft_strdup(filetoadd->d_name), nodepath, flags));
 	return (1);
 }

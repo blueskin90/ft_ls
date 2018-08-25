@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/23 16:42:01 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/25 20:39:29 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int					get_more_info(t_file *file, int flags)
 	file->infos.permissions[7] = ((file->stat.st_mode & S_IROTH) ? 'r' : '-');
 	file->infos.permissions[8] = ((file->stat.st_mode & S_IWOTH) ? 'w' : '-');
 	file->infos.permissions[9] = ((file->stat.st_mode & S_IXOTH) ? 'x' : '-');
+	file->infos.permissions[10] = ' ';
 	(void)flags;
 	return (1);
 }
@@ -95,6 +96,8 @@ int					flagset(t_param *env, char *str)
 			env->flags |= T_FLAG;
 		else if (str[i] == 'f')
 			env->flags |= (F_FLAG + A_FLAG);
+		else if (str[i] == 'g')
+			env->flags |= G_FLAG;
 		else
 			illegal_option(str[i]);
 		i++;
