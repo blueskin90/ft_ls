@@ -6,7 +6,7 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/08/29 18:57:43 by toliver          ###   ########.fr        #
+#    Updated: 2018/08/29 22:22:59 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,15 @@ FILES = ft_ls \
 		parsing \
 		error \
 		list_handling \
+		get_list \
+		get_infos \
+		get_functions \
+		print_long \
+		print_long2 \
+		recursive \
+		print_list \
+		node_handling \
+		node_move \
 		printing \
 
 SRC = $(addsuffix .c, $(FILES))
