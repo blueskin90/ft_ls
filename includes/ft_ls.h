@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/29 22:23:04 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 22:32:42 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,52 +80,59 @@ typedef struct	s_param
 }				t_param;
 
 /*
-**	In testing functions
+**	Recursive functions
 */
 
+int				recursive(t_file **list, int flags, int width);
+int				recursiveelse(t_file **list, t_file *file, int flags,
+								int width);
+int				newline(int *isfirst);
+
+/*
+** Utility functions
+*/
+
+int				iscorrectflag(char c);
 int				nbrlen(long long int nbr);
 int				get_linkslen(t_file *list);
 int				get_uidlen(t_file *list);
 int				get_grgidlen(t_file *list);
 int				get_biggestsize(t_file *list);
 int				get_biggestday(t_file *list);
-int				fill_dir(t_file *file, int flags);
-int				recursive(t_file **list, int flags, int width);
-int				addfile(struct dirent *filetoadd, t_file *dir, int flags);
-int				iscorrectflag(char c);
-int				clearlist(t_file **file);
 int				containadir(t_file *list);
-int				print_link(t_file *file);
-int				print_size(int biggest, t_file *file);
-int				print_time(t_file *list, t_file *ptr);
-int				print_users(t_file *list, t_file *ptr, int flags);
-int				print_blksize(t_file *list);
-int				column_varinit(int width, int *lines, int *fileperline,
-								t_file *list);
-int				recursiveelse(t_file **list, t_file *file, int flags,
-								int width);
-int				newline(int *isfirst);
 
 /*
 ** Printing functions
 */
 
+int				print_list_onepercolumn(t_file *list);
 int				print_errorlist(t_file **errorlist);
 int				print_filelist(t_file **filelist, int flags, int width);
 int				print_list_long(t_file *list, int width, int flags);
 int				print_list_column(t_file *list, int width);
 int				print_firstdirlist(t_file **list, int flags, int width);
 int				print_permissiondenied(t_file *file);
+int				print_link(t_file *file);
+int				print_size(int biggest, t_file *file);
+int				print_time(t_file *list, t_file *ptr);
+int				print_users(t_file *list, t_file *ptr, int flags);
+int				print_blksize(t_file *list);
+
 /*
 ** Initialization functions
 */
 
+int				column_varinit(int width, int *lines, int *fileperline,
+								t_file *list);
 int				envinit(t_param *env);
 
 /*
 ** Parsing functions
 */
 
+int				clearlist(t_file **file);
+int				fill_dir(t_file *file, int flags);
+int				addfile(struct dirent *filetoadd, t_file *dir, int flags);
 int				parsing(int argc, char **argv, t_param *env);
 int				flagset(t_param *env, char *str);
 int				illegal_option(char c);
