@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 16:48:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/29 18:13:30 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 19:53:10 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int					print_filelist(t_file **filelist, int flags, int width)
 	if (flags & LONG_FLAGS)
 		print_list_long(*filelist, width, flags);
 	else
-		print_list_column(*filelist, width);	
+		print_list_column(*filelist, width);
 	return (1);
 }
 
@@ -50,7 +50,7 @@ int					nbrlen(long long int nbr)
 	while (nbr / 10 || nbr % 10)
 	{
 		i++;
-		nbr = nbr/10;
+		nbr = nbr / 10;
 	}
 	return (i);
 }
@@ -87,7 +87,8 @@ int					get_uidlen(t_file *list)
 			if ((size = nbrlen(ptr->stat.st_uid)) > biggest)
 				biggest = size;
 		}
-		else if ((size = ft_strlen(getpwuid(ptr->stat.st_uid)->pw_name)) > biggest)
+		else if ((size = ft_strlen(getpwuid(ptr->stat.st_uid)->pw_name))
+				> biggest)
 			biggest = size;
 		ptr = ptr->next;
 	}
@@ -109,7 +110,8 @@ int					get_grgidlen(t_file *list)
 			if ((size = nbrlen(ptr->stat.st_gid)) > biggest)
 				biggest = size;
 		}
-		else if((size = ft_strlen(getgrgid(ptr->stat.st_gid)->gr_name)) > biggest)
+		else if ((size = ft_strlen(getgrgid(ptr->stat.st_gid)->gr_name))
+				> biggest)
 			biggest = size;
 		ptr = ptr->next;
 	}
@@ -143,7 +145,8 @@ int					get_biggestday(t_file *list)
 	ptr = list;
 	while (ptr)
 	{
-		if ((size = nbrlen(ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7))) > biggest)
+		if ((size = nbrlen(ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7)))
+				> biggest)
 			biggest = size;
 		ptr = ptr->next;
 	}
@@ -155,16 +158,16 @@ int					print_list_long(t_file *list, int width, int flags)
 	t_file			*ptr;
 
 	ptr = list;
-	// penser : si grp name ou usr name = NULL, display le numero, si c'est un c afficher nombre, nombre, faire la date et heure de modification et le -> lien pour les liens 
 	if (ptr)
 		print_blksize(list);
 	while (ptr)
 	{
-		ft_printf("%.10s %*d", ptr->infos.permissions, get_linkslen(list), ptr->stat.st_nlink);
+		ft_printf("%.10s %*d", ptr->infos.permissions, get_linkslen(list) + 1,
+				ptr->stat.st_nlink);
 		print_users(list, ptr, flags);
 		print_size(get_biggestsize(list) + 1, ptr);
 		print_time(list, ptr);
-		ft_printf(" %s",ptr->name);
+		ft_printf(" %s", ptr->name);
 		if (ptr->infos.permissions[0] == 'l')
 			print_link(ptr);
 		ft_putchar('\n');
@@ -195,12 +198,14 @@ int					print_users(t_file *list, t_file *ptr, int flags)
 	if (!(flags & G_FLAG))
 	{
 		if (getpwuid(ptr->stat.st_uid) != NULL)
-			ft_printf(" %-*s", get_uidlen(list) + 1, getpwuid(ptr->stat.st_uid)->pw_name);
+			ft_printf(" %-*s", get_uidlen(list) + 1,
+					getpwuid(ptr->stat.st_uid)->pw_name);
 		else
 			ft_printf(" %-*d", get_uidlen(list) + 1, ptr->stat.st_uid);
 	}
 	if (getgrgid(ptr->stat.st_gid) != NULL)
-		ft_printf(" %-*s", get_grgidlen(list) + 1, getgrgid(ptr->stat.st_gid)->gr_name);
+		ft_printf(" %-*s", get_grgidlen(list) + 1,
+				getgrgid(ptr->stat.st_gid)->gr_name);
 	else
 		ft_printf("%-*d", get_grgidlen(list) + 1, ptr->stat.st_gid);
 	return (1);
@@ -209,7 +214,8 @@ int					print_users(t_file *list, t_file *ptr, int flags)
 int					print_time(t_file *list, t_file *ptr)
 {
 	ft_printf(" %.3s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 4);
-	ft_printf(" %*d", get_biggestday(list), ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7));
+	ft_printf(" %*d", get_biggestday(list),
+			ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7));
 	ft_printf(" %.5s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 11);
 	return (1);
 }
@@ -218,7 +224,6 @@ int					print_size(int biggest, t_file *ptr)
 {
 	if (ptr->infos.permissions[0] == 'c' || ptr->infos.permissions[0] == 'b')
 		ft_printf("%u, %u", major(ptr->stat.st_rdev), minor(ptr->stat.st_rdev));
-	// si c-est un c ou b afficher mineur / majeur
 	else
 		ft_printf("%*lld", biggest, ptr->stat.st_size);
 	return (1);
@@ -246,7 +251,7 @@ int					print_list_onepercolumn(t_file *list)
 		ft_printf("%s\n", ptr->name);
 		ptr = ptr->next;
 	}
-	return (1);	
+	return (1);
 }
 
 int					print_list_column(t_file *list, int width)
@@ -284,8 +289,7 @@ int					print_list_column(t_file *list, int width)
 
 int				print_permissiondenied(t_file *file)
 {
-	ft_printf("ft_ls:\n%s: Permission denied\n", file->name);
-	// la ou jappelle cette fonction, penser a l'erreur "directorz causes a cycle");
+	ft_printf("ft_ls: %s: %s\n", file->name, strerror(errno));
 	return (1);
 }
 
@@ -297,7 +301,7 @@ int				containadir(t_file *list)
 	while (ptr)
 	{
 		if (S_ISDIR(ptr->stat.st_mode))
-			break;
+			break ;
 		ptr = ptr->next;
 	}
 	if (ptr)
@@ -324,6 +328,7 @@ int				recursive(t_file **list, int flags, int width)
 				ft_putchar('\n');
 			if (!(fill_dir(file, flags)))
 			{
+				ft_printf("%s:\n", file->path);
 				print_permissiondenied(file);
 				if (file->next)
 					ft_putchar('\n');
@@ -355,7 +360,8 @@ int				clearlist(t_file **list)
 	while (ptr)
 	{
 		if (!(S_ISDIR(ptr->stat.st_mode)) || (S_ISDIR(ptr->stat.st_mode)
-			&& (ft_strcmp(ptr->name, ".") == 0 || ft_strcmp(ptr->name, "..") == 0)))
+			&& (ft_strcmp(ptr->name, ".") == 0
+				|| ft_strcmp(ptr->name, "..") == 0)))
 		{
 			tmp = ptr->next;
 			delnode(list, ptr);

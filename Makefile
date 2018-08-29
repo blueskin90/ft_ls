@@ -6,13 +6,13 @@
 #    By: toliver <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/12 01:24:53 by toliver           #+#    #+#              #
-#    Updated: 2018/08/25 20:30:46 by toliver          ###   ########.fr        #
+#    Updated: 2018/08/29 18:57:43 by toliver          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ls
 
-FLAGS = -Werror -Wextra -Wall
+CFLAGS = -Werror -Wextra -Wall -g3 -fsanitize=address,undefined
 
 FILES = ft_ls \
 		init \
@@ -45,10 +45,10 @@ all: $(NAME)
 $(NAME): $(OBJS) $(HEADERS)
 	make -C libs/libft/
 	make -C libs/ft_printf/
-	gcc -o $(NAME) $(OBJS) $(FLAGS) $(LIBS) $(INCLUDES)
+	gcc -o $(NAME) $(OBJS) $(CFLAGS) $(LIBS) $(INCLUDES)
 
 %.o: srcs/%.c $(HEADERS)
-	gcc -o $@ -c $< $(FLAGS) $(INCLUDES)
+	gcc -o $@ -c $< $(CFLAGS) $(INCLUDES)
 
 clean:
 	make clean -C libs/libft/

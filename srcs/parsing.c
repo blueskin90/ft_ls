@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/29 18:13:31 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 19:29:36 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ int					flagset(t_param *env, char *str)
 {
 	int				i;
 
-	i = 1;
-	while (str[i])
+	i = 0;
+	while (str[++i])
 	{
 		if (str[i] == 'R')
 			env->flags |= BIGR_FLAG;
@@ -100,7 +100,6 @@ int					flagset(t_param *env, char *str)
 			env->flags |= G_FLAG;
 		else
 			illegal_option(str[i]);
-		i++;
 	}
 	if (env->flags & T_FLAG && env->flags & F_FLAG)
 		env->flags ^= T_FLAG;
@@ -123,9 +122,9 @@ int					parsing(int argc, char **argv, t_param *env)
 	{
 		if (argv[i][0] != '-'
 				|| (argv[i][0] == '-' && !(iscorrect(argv[i][1]))))
-			break;
+			break ;
 		else
-				flagset(env, argv[i]);
+			flagset(env, argv[i]);
 		i++;
 	}
 	if (i >= argc)
@@ -170,11 +169,12 @@ int					first_check(t_param *env)
 int			fill_dir(t_file *dir, int flags)
 {
 	struct dirent	*currentdir;
+
 	if (!(dir->dirp = opendir(dir->path)))
 		return (0);
-	while((currentdir = readdir(dir->dirp)))
+	while ((currentdir = readdir(dir->dirp)))
 	{
-		if ((flags & A_FLAG) || (!(flags & A_FLAG) 
+		if ((flags & A_FLAG) || (!(flags & A_FLAG)
 					&& currentdir->d_name[0] != '.'))
 		{
 			addfile(currentdir, dir, flags);

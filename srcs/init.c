@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:40:25 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/22 16:40:34 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 19:22:26 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int					envinit(t_param *env)
 {
 	struct winsize	w;
+
 	if ((ioctl(0, TIOCGWINSZ, &w)) == -1)
 	{
 		ft_putstr_fd("Couldn't get the size of the terminal\n", 2);

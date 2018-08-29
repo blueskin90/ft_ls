@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 23:00:55 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/25 18:48:03 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 19:28:09 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,21 @@ int					addfile(struct dirent *filetoadd, t_file *file, int flags)
 
 	if (file->path[0] != '/' || (file->path[0] == '/' && file->path[1] != 0))
 	{
-		nodepath = ft_strjoin(file->path, "/");
+		if (!(nodepath = ft_strjoin(file->path, "/")))
+			exit(1);
 		tmp = nodepath;
-		nodepath = ft_strjoin(tmp, filetoadd->d_name);
+		if (!(nodepath = ft_strjoin(tmp, filetoadd->d_name)))
+			exit(1);
 		free(tmp);
 	}
 	else
 	{
 		tmp = file->path;
-		nodepath = ft_strjoin(tmp, filetoadd->d_name);
+		if (!(nodepath = ft_strjoin(tmp, filetoadd->d_name)))
+			exit(1);
 	}
-	addnode(&file->list, nodealloc(ft_strdup(filetoadd->d_name), nodepath, flags));
+	addnode(&file->list, nodealloc(ft_strdup(filetoadd->d_name), nodepath,
+				flags));
 	return (1);
 }
 
@@ -38,7 +42,7 @@ t_file				*nodealloc(char *name, char *path, int flags)
 	t_file			*file;
 
 	if (!(file = (t_file*)malloc(sizeof(t_file))))
-		return (NULL);  // quoi faire si ca foire
+		exit(1);
 	file->name = name;
 	file->path = (path == NULL) ? ft_strdup(name) : path;
 	file->iserror = 0;
@@ -60,12 +64,12 @@ int			addfirstnode(t_file **list, t_file *nodetoadd)
 		*list = nodetoadd;
 	}
 	return (1);
-
 }
 
 int			addnode(t_file **list, t_file *nodetoadd)
 {
 	t_file	*ptr;
+
 	if (*list == NULL)
 		*list = nodetoadd;
 	else
@@ -102,10 +106,10 @@ int			movenode(t_file **listfrom, t_file *filetomove, t_file **listto)
 	return (1);
 }
 
-int			movenodefirst(t_file **listfrom, t_file *filetomove, t_file **listto)
+int			movenodefirst(t_file **from, t_file *filetomove, t_file **to)
 {
-	delnode(listfrom, filetomove);
-	addfirstnode(listto, filetomove);
+	delnode(from, filetomove);
+	addfirstnode(to, filetomove);
 	return (1);
 }
 
@@ -116,7 +120,7 @@ int			freenode(t_file *node)
 	freelist(&node->list);
 	freelist(&node->errorlist);
 	free(node);
-	return (1);	
+	return (1);
 }
 
 int			freelist(t_file **list)
@@ -149,7 +153,7 @@ t_file		*get_first_time(t_file **list)
 			tmp = tmp->next;
 		else
 		{
-			if (tmp->stat.st_mtime > file->stat.st_mtime || 
+			if (tmp->stat.st_mtime > file->stat.st_mtime ||
 					(tmp->stat.st_mtime == file->stat.st_mtime &&
 					ft_strcmp(file->name, tmp->name) > 0))
 				file = tmp;
@@ -209,7 +213,6 @@ int			listorder(t_file **list, int flags)
 		*list = newlist;
 	}
 	return (1);
-
 }
 
 int			errorlistorder(t_file **list)
