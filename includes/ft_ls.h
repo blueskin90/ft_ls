@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/25 20:13:35 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 18:13:34 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <time.h>
 #include <pwd.h>
 #include <uuid/uuid.h>
+#include <limits.h>
 
 #define MULTIFILE 0x80000000 // multi output
 #define BIGR_FLAG 64 // recursive
@@ -97,7 +98,11 @@ int				addfile(struct dirent *filetoadd, t_file *dir, int flags);
 int				iscorrectflag(char c);
 int				clearlist(t_file **file);
 int				containadir(t_file *list);
-
+int				print_link(t_file *file);
+int				print_size(int biggest, t_file *file);
+int				print_time(t_file *list, t_file *ptr);
+int				print_users(t_file *list, t_file *ptr, int flags);
+int				print_blksize(t_file *list);
 /*
 ** Printing functions
 */

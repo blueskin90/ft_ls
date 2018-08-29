@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 16:48:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/25 20:39:27 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/29 18:13:30 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,41 +156,83 @@ int					print_list_long(t_file *list, int width, int flags)
 
 	ptr = list;
 	// penser : si grp name ou usr name = NULL, display le numero, si c'est un c afficher nombre, nombre, faire la date et heure de modification et le -> lien pour les liens 
+	if (ptr)
+		print_blksize(list);
 	while (ptr)
 	{
-		if (flags & G_FLAG)
-		{
-			ft_printf("%s %*d ", ptr->infos.permissions, get_linkslen(list), ptr->stat.st_nlink);
-			if (getgrgid(ptr->stat.st_gid)->gr_name == NULL)
-				ft_printf("%-*d %*lld %s", get_grgidlen(list), ptr->stat.st_gid, get_biggestsize(list) + 1, ptr->stat.st_size, ptr->name);
-			else
-				ft_printf("%-*s %*lld %s", get_grgidlen(list), getgrgid(ptr->stat.st_gid)->gr_name, get_biggestsize(list) + 1, ptr->stat.st_size, ptr->name);
-			ft_putchar('\n');
-		}
-		else
-		{
-			ft_printf("%s %*d", ptr->infos.permissions, get_linkslen(list), ptr->stat.st_nlink);
-			if (getpwuid(ptr->stat.st_uid) != NULL)
-				ft_printf(" %-*s", get_uidlen(list) + 1, getpwuid(ptr->stat.st_uid)->pw_name);
-			else
-				ft_printf(" %-*d", get_uidlen(list) + 1, ptr->stat.st_uid);
-			if (getgrgid(ptr->stat.st_gid) != NULL)
-				ft_printf(" %-*s", get_grgidlen(list) + 1, getgrgid(ptr->stat.st_gid)->gr_name);
-			else
-				ft_printf("%-*d", get_grgidlen(list) + 1, ptr->stat.st_gid);
-			ft_printf("%*lld", get_biggestsize(list) + 1, ptr->stat.st_size);
-			ft_printf(" %.3s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 4);
-			ft_printf(" %*d", get_biggestday(list), ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7));
-			ft_printf(" %.5s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 11);
-			ft_printf(" %s",ptr->name);
-			if (ptr->infos.permissions[0] == 'l')
-				ft_printf(" -> %s mettre le fichier vers lequel ca pointe", ptr->path);
-			ft_putchar('\n');
-		}
+		ft_printf("%.10s %*d", ptr->infos.permissions, get_linkslen(list), ptr->stat.st_nlink);
+		print_users(list, ptr, flags);
+		print_size(get_biggestsize(list) + 1, ptr);
+		print_time(list, ptr);
+		ft_printf(" %s",ptr->name);
+		if (ptr->infos.permissions[0] == 'l')
+			print_link(ptr);
+		ft_putchar('\n');
 		ptr = ptr->next;
 	}
-	(void)flags;
 	(void)width;
+	return (1);
+}
+
+int					print_blksize(t_file *list)
+{
+	t_file			*ptr;
+	int				totalsize;
+
+	ptr = list;
+	totalsize = 0;
+	while (ptr)
+	{
+		totalsize += ptr->stat.st_blocks;
+		ptr = ptr->next;
+	}
+	ft_printf("total %d\n", totalsize);
+	return (1);
+}
+
+int					print_users(t_file *list, t_file *ptr, int flags)
+{
+	if (!(flags & G_FLAG))
+	{
+		if (getpwuid(ptr->stat.st_uid) != NULL)
+			ft_printf(" %-*s", get_uidlen(list) + 1, getpwuid(ptr->stat.st_uid)->pw_name);
+		else
+			ft_printf(" %-*d", get_uidlen(list) + 1, ptr->stat.st_uid);
+	}
+	if (getgrgid(ptr->stat.st_gid) != NULL)
+		ft_printf(" %-*s", get_grgidlen(list) + 1, getgrgid(ptr->stat.st_gid)->gr_name);
+	else
+		ft_printf("%-*d", get_grgidlen(list) + 1, ptr->stat.st_gid);
+	return (1);
+}
+
+int					print_time(t_file *list, t_file *ptr)
+{
+	ft_printf(" %.3s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 4);
+	ft_printf(" %*d", get_biggestday(list), ft_atoi(ctime(&ptr->stat.st_ctimespec.tv_sec) + 7));
+	ft_printf(" %.5s", ctime(&ptr->stat.st_ctimespec.tv_sec) + 11);
+	return (1);
+}
+
+int					print_size(int biggest, t_file *ptr)
+{
+	if (ptr->infos.permissions[0] == 'c' || ptr->infos.permissions[0] == 'b')
+		ft_printf("%u, %u", major(ptr->stat.st_rdev), minor(ptr->stat.st_rdev));
+	// si c-est un c ou b afficher mineur / majeur
+	else
+		ft_printf("%*lld", biggest, ptr->stat.st_size);
+	return (1);
+}
+
+int					print_link(t_file *ptr)
+{
+	char			path[PATH_MAX + 1];
+	int				readret;
+
+	if ((readret = readlink(ptr->path, path, PATH_MAX)) == -1)
+		return (-1);
+	path[readret] = '0';
+	ft_printf(" -> %s", path);
 	return (1);
 }
 
@@ -312,7 +354,8 @@ int				clearlist(t_file **list)
 	ptr = *list;
 	while (ptr)
 	{
-		if (!(S_ISDIR(ptr->stat.st_mode)))
+		if (!(S_ISDIR(ptr->stat.st_mode)) || (S_ISDIR(ptr->stat.st_mode)
+			&& (ft_strcmp(ptr->name, ".") == 0 || ft_strcmp(ptr->name, "..") == 0)))
 		{
 			tmp = ptr->next;
 			delnode(list, ptr);
