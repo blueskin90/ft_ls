@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/19 23:27:21 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/29 22:32:42 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/30 19:28:35 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ int				print_filelist(t_file **filelist, int flags, int width);
 int				print_list_long(t_file *list, int width, int flags);
 int				print_list_column(t_file *list, int width);
 int				print_firstdirlist(t_file **list, int flags, int width);
+int				print_fdirlistloop(t_file **list, t_file *ptr, int flags,
+				int width);
 int				print_permissiondenied(t_file *file);
 int				print_link(t_file *file);
 int				print_size(int biggest, t_file *file);

@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/20 17:41:39 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/29 22:08:03 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/31 23:57:12 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,27 +39,26 @@ int					parsing(int argc, char **argv, t_param *env)
 {
 	int				i;
 
-	i = 1;
-	while (i < argc)
+	i = 0;
+	while (++i < argc)
 	{
-		if (argv[i][0] != '-'
-				|| (argv[i][0] == '-' && !(iscorrect(argv[i][1]))))
+		if (ft_strcmp(argv[i], "--") == 0)
+		{
+			i++;
+			break ;
+		}
+		if (argv[i][0] != '-')
 			break ;
 		else
 			flagset(env, argv[i]);
-		i++;
 	}
 	if (i >= argc)
-		fileadd(&env->list, ft_strdup("."), NULL, env->flags);
-	else
+		return (fileadd(&env->list, ft_strdup("."), NULL, env->flags));
+	env->flags |= ((i < argc - 1) ? MULTIFILE : 0);
+	while (i < argc)
 	{
-		if (i < argc - 1)
-			env->flags |= MULTIFILE;
-		while (i < argc)
-		{
-			fileadd(&env->list, ft_strdup(argv[i]), NULL, env->flags);
-			i++;
-		}
+		fileadd(&env->list, ft_strdup(argv[i]), NULL, env->flags);
+		i++;
 	}
 	return (1);
 }
@@ -80,9 +79,9 @@ int					first_check(t_param *env)
 		else
 			listptr = listptr->next;
 	}
-	print_errorlist(&env->errorlist);
-	print_filelist(&env->filelist, env->flags, env->width);
-	if ((env->errorlist || env->filelist) && env->list)
+	if (print_errorlist(&env->errorlist) && (env->filelist || env->list))
+		ft_printf("\n");
+	if (print_filelist(&env->filelist, env->flags, env->width) && env->list)
 		ft_printf("\n");
 	print_firstdirlist(&env->list, env->flags, env->width);
 	return (1);

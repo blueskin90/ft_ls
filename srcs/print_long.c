@@ -6,7 +6,7 @@
 /*   By: toliver <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/29 22:12:22 by toliver           #+#    #+#             */
-/*   Updated: 2018/08/29 22:15:42 by toliver          ###   ########.fr       */
+/*   Updated: 2018/08/31 23:45:47 by toliver          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@ int					print_list_long(t_file *list, int width, int flags)
 	t_file			*ptr;
 
 	ptr = list;
-	if (ptr)
-		print_blksize(list);
+	if (!ptr)
+		return (0);
+	print_blksize(list);
 	while (ptr)
 	{
 		ft_printf("%.10s %*d", ptr->infos.permissions, get_linkslen(list) + 1,
